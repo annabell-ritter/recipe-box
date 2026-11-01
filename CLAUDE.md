@@ -17,7 +17,7 @@ A small web app where each signed-in user keeps their own private recipes (title
 ## Ground rules
 - Authentication comes first. No data feature is built before sign-up, log-in, and log-out work.
 - Authentication uses Supabase Auth (email and password) only. Do not build custom auth, store passwords, or handle sessions manually. The signed-in user's id from Supabase Auth is what RLS policies and the data handler rely on.
-- Email confirmation is turned off. New users are signed in right after sign-up.
+- Email confirmation stays ON in Supabase Auth. Never turn it off or change any Supabase Auth settings. Automated tests must not sign up new users or read emails. They log in with a confirmed test user whose credentials come from E2E_TEST_EMAIL and E2E_TEST_PASSWORD in `.env.local` (git-ignored), never hardcoded in committed files or printed in output.
 - A signed-out visitor must not reach any protected page or data, including via direct URLs.
 - All data access goes through one central data handler. Pages and components never call Supabase for recipe data directly. The handler checks the signed-in user on every operation.
 - Every table has Row Level Security enabled and at least one owner-scoped policy (based on the signed-in user's id).

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -22,6 +23,11 @@ export default function Page() {
               <p className="text-sm text-muted-foreground">
                 You&apos;ve successfully signed up. Please check your email to
                 confirm your account before signing in.
+              </p>
+              <p className="mt-4 text-sm">
+                <Link href="/auth/login" className="underline underline-offset-4">
+                  Back to login
+                </Link>
               </p>
             </CardContent>
           </Card>

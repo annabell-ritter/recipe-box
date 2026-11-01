@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Suspense } from "react";
 
@@ -42,6 +43,11 @@ export default function Page({
               <Suspense>
                 <ErrorContent searchParams={searchParams} />
               </Suspense>
+              <p className="mt-4 text-sm">
+                <Link href="/auth/login" className="underline underline-offset-4">
+                  Back to login
+                </Link>
+              </p>
             </CardContent>
           </Card>
         </div>
