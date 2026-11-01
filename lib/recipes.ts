@@ -19,8 +19,9 @@ import type { Tables } from "@/lib/database.types";
 
 export const TITLE_MAX_LENGTH = 200;
 export const TEXT_MAX_LENGTH = 10_000;
+export const PREVIEW_MAX_LENGTH = 100;
 
-const SUMMARY_COLUMNS = "id, title, created_at";
+const SUMMARY_COLUMNS = "id, title, ingredients, created_at";
 const DETAIL_COLUMNS = "id, title, ingredients, instructions, created_at";
 
 const UUID_PATTERN =
@@ -29,12 +30,17 @@ const UUID_PATTERN =
 export type RecipeSummary = {
   id: string;
   title: string;
+  /** Ingredients on one line, cut to about 100 characters with "...". */
+  ingredientsPreview: string;
   createdAt: string;
 };
 
-export type Recipe = RecipeSummary & {
+export type Recipe = {
+  id: string;
+  title: string;
   ingredients: string;
   instructions: string;
+  createdAt: string;
 };
 
 /** What a form sends. Values are checked, never trusted. */
@@ -69,7 +75,7 @@ type DetailRow = Pick<
   "id" | "title" | "ingredients" | "instructions" | "created_at"
 >;
 
-type SummaryRow = Pick<DetailRow, "id" | "title" | "created_at">;
+type SummaryRow = Pick<DetailRow, "id" | "title" | "ingredients" | "created_at">;
 
 /** Server-side client plus the verified signed-in user's id. */
 async function requireSignedIn() {
@@ -83,8 +89,24 @@ async function requireSignedIn() {
   return { supabase, userId: data.user.id };
 }
 
+/** Joins the ingredient lines with ", " and shortens to PREVIEW_MAX_LENGTH. */
+function previewOf(text: string): string {
+  const oneLine = text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join(", ");
+  if (oneLine.length <= PREVIEW_MAX_LENGTH) return oneLine;
+  return `${oneLine.slice(0, PREVIEW_MAX_LENGTH).trimEnd()}...`;
+}
+
 function toSummary(row: SummaryRow): RecipeSummary {
-  return { id: row.id, title: row.title, createdAt: row.created_at };
+  return {
+    id: row.id,
+    title: row.title,
+    ingredientsPreview: previewOf(row.ingredients),
+    createdAt: row.created_at,
+  };
 }
 
 function toRecipe(row: DetailRow): Recipe {
