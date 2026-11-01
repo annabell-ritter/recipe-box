@@ -68,7 +68,8 @@ export async function updateSession(request: NextRequest) {
     return redirectTo(isSignedIn ? HOME_FOR_SIGNED_IN : LOGIN_PATH);
   }
 
-  if (pathname.startsWith("/auth")) {
+  // Only /auth and /auth/... are public (not e.g. /authors).
+  if (pathname === "/auth" || pathname.startsWith("/auth/")) {
     if (isSignedIn && SIGNED_OUT_ONLY.includes(pathname)) {
       return redirectTo(HOME_FOR_SIGNED_IN);
     }
