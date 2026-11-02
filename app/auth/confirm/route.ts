@@ -1,3 +1,4 @@
+import { type AuthErrorCode } from "@/lib/auth-errors";
 import { createClient } from "@/lib/supabase/server";
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
@@ -25,8 +26,8 @@ function safeNext(value: string | null, requestUrl: string): string {
   }
 }
 
-function errorRedirect(message: string): never {
-  redirect(`/auth/error?error=${encodeURIComponent(message)}`);
+function errorRedirect(code: AuthErrorCode): never {
+  redirect(`/auth/error?error=${code}`);
 }
 
 // Handles the link in the sign-up confirmation email. Supabase's default email
@@ -43,9 +44,7 @@ export async function GET(request: NextRequest) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      errorRedirect(
-        "This confirmation link could not sign you in. If your email is already confirmed, please log in.",
-      );
+      errorRedirect("confirm_failed");
     }
     redirect(next);
   }
@@ -53,10 +52,10 @@ export async function GET(request: NextRequest) {
   if (token_hash && type) {
     const { error } = await supabase.auth.verifyOtp({ type, token_hash });
     if (error) {
-      errorRedirect(error.message);
+      errorRedirect("link_invalid");
     }
     redirect(next);
   }
 
-  errorRedirect("The confirmation link is missing or incomplete.");
+  errorRedirect("link_incomplete");
 }
