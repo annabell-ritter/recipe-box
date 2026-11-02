@@ -16,14 +16,14 @@ const BASE_URL = 'http://localhost:3000';
  */
 export default defineConfig({
   testDir: './tests',
-  /* Run tests in files in parallel */
-  fullyParallel: true,
+  /* All tests share one test account, and the list test expects it to be
+     empty, so tests run one at a time. */
+  fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   /* List results in the terminal; keep the HTML report without auto-opening it. */
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
