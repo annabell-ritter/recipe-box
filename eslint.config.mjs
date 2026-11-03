@@ -9,6 +9,20 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
+const RECIPES_QUERY = {
+  selector:
+    "CallExpression[callee.property.name='from'][arguments.0.value='recipes']",
+  message:
+    "Query the recipes table only in lib/recipes.ts. Use its functions instead.",
+};
+
+const CHAT_QUERY = {
+  selector:
+    "CallExpression[callee.property.name='from'][arguments.0.value='chat_messages']",
+  message:
+    "Query the chat_messages table only in lib/chats.ts. Use its functions instead.",
+};
+
 const eslintConfig = [
   {
     // Generated output, not source code.
@@ -23,19 +37,34 @@ const eslintConfig = [
     ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  // Each table is queried only in its central handler: recipes in
+  // lib/recipes.ts, chat_messages in lib/chats.ts. (Later config blocks
+  // replace this rule's options, so each block lists every table it forbids.)
   {
-    // All recipe data goes through the central handler in lib/recipes.ts.
-    ignores: ["lib/recipes.ts"],
+    ignores: ["lib/recipes.ts", "lib/chats.ts"],
     rules: {
-      "no-restricted-syntax": [
-        "error",
-        {
-          selector:
-            "CallExpression[callee.property.name='from'][arguments.0.value='recipes']",
-          message:
-            "Query the recipes table only in lib/recipes.ts. Use its functions instead.",
-        },
-      ],
+      "no-restricted-syntax": ["error", RECIPES_QUERY, CHAT_QUERY],
+    },
+  },
+  {
+    files: ["lib/recipes.ts"],
+    rules: {
+      "no-restricted-syntax": ["error", CHAT_QUERY],
+    },
+  },
+  {
+    files: ["lib/chats.ts"],
+    rules: {
+      "no-restricted-syntax": ["error", RECIPES_QUERY],
+    },
+  },
+  {
+    // The Playwright cleanup deletes its own test conversations directly,
+    // signed in as the test user (RLS still applies). This is test code
+    // only; nothing in it ships with the app.
+    files: ["tests/chat-helpers.ts"],
+    rules: {
+      "no-restricted-syntax": ["error", RECIPES_QUERY],
     },
   },
 ];
