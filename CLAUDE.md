@@ -37,6 +37,7 @@ A small web app where each signed-in user keeps their own private recipes (title
   - `chat_messages` (`id`, `user_id`, `conversation_id`, `role`, `content`, `created_at`) for saved chat history. A conversation is the set of rows sharing a `conversation_id`; there is no conversations table.
 - Ingredients and instructions are plain text fields. Do not add extra tables (no ingredients, tags, collections, or conversations tables).
 - `chat_messages` is accessed only through its own central data handler, `lib/chats.ts` (server-only), with the same rules as `lib/recipes.ts`. A lint rule rejects queries to it anywhere else.
+  - One exception: `tests/chat-helpers.ts` may query `chat_messages` directly, only to delete the test user's own test conversations and confirm they are gone. It signs in as the E2E test user, so RLS still applies. No other file gets this exception.
 
 ## Pages
 - Public: login/sign-up.

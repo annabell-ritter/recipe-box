@@ -59,9 +59,11 @@ const eslintConfig = [
     },
   },
   {
-    // The Playwright cleanup deletes its own test conversations directly,
-    // signed in as the test user (RLS still applies). This is test code
-    // only; nothing in it ships with the app.
+    // Approved exception (see CLAUDE.md, Data section): the Playwright
+    // cleanup deletes its own test conversations directly and checks they
+    // are gone, signed in as the test user (RLS still applies). It cannot
+    // use lib/chats.ts because that only runs inside the Next.js server.
+    // Test code only; nothing in it ships with the app.
     files: ["tests/chat-helpers.ts"],
     rules: {
       "no-restricted-syntax": ["error", RECIPES_QUERY],

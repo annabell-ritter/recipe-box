@@ -15,9 +15,9 @@ type ChatProps = {
 };
 
 export function Chat({ initialConversationId, initialMessages }: ChatProps) {
-  // Every send passes the whole conversation to the server, so the AI can
-  // follow up on earlier messages. The server also saves each question and
-  // reply to Supabase, and the page loads them again after a reload.
+  // Each send passes only the new question. The server loads the earlier
+  // messages from Supabase itself (so the AI can follow up on them), saves
+  // the question and reply, and the page loads them again after a reload.
   const [conversationId, setConversationId] = useState(initialConversationId);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [draft, setDraft] = useState("");
@@ -41,7 +41,7 @@ export function Chat({ initialConversationId, initialMessages }: ChatProps) {
     setNotice(null);
 
     startTransition(async () => {
-      const result = await sendChatMessage(conversationId, conversation);
+      const result = await sendChatMessage(conversationId, text);
       if (result.ok) {
         setMessages([...conversation, { role: "assistant", content: result.reply }]);
         if (!result.saved) {

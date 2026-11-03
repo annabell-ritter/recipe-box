@@ -67,8 +67,9 @@ test.describe('chat with fixed test replies', () => {
     const first = 'What can I cook with leeks?';
     const followUp = 'Tell me more about that.';
     const firstReply = `Test reply 1 (received 1 message): ${first}`;
-    // 3 messages = first question, first reply, follow-up: the whole
-    // conversation reached the server, which is what gives the AI its memory.
+    // 3 messages = first question, first reply, follow-up: the browser sends
+    // only the follow-up, so the server loaded the first two from Supabase.
+    // That saved history is what gives the AI its memory.
     const followUpReply = `Test reply 2 (received 3 messages): ${followUp}`;
 
     await test.step('send a message and a reply appears', async () => {
