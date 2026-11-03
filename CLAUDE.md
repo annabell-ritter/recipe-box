@@ -27,9 +27,17 @@ A small web app where each signed-in user keeps their own private recipes (title
 - Do not use or add a Supabase secret or service role key. If one ever seems necessary, stop and ask first.
 - `.env.local` must be git-ignored and never appear in repository history.
 
+## AI model calls
+- All model calls must happen server-side only. Never call the OpenRouter API from browser code.
+- OPENROUTER_API_KEY lives in `.env.local` and must never be exposed to the browser (no NEXT_PUBLIC_ prefix, no passing it to client components).
+
 ## Data
-- One table: `recipes` (`id`, `user_id`, `title`, `ingredients`, `instructions`, `created_at`).
-- Ingredients and instructions are plain text fields. Do not add extra tables (no ingredients, tags, or collections tables).
+- Two tables:
+  - `recipes` (`id`, `user_id`, `title`, `ingredients`, `instructions`, `created_at`).
+  - `chat_messages` (`id`, `user_id`, `conversation_id`, `role`, `content`, `created_at`) for saved chat history. A conversation is the set of rows sharing a `conversation_id`; there is no conversations table.
+- Ingredients and instructions are plain text fields. Do not add extra tables (no ingredients, tags, collections, or conversations tables).
+- `chat_messages` is accessed only through its own central data handler, `lib/chats.ts` (server-only), with the same rules as `lib/recipes.ts`. A lint rule rejects queries to it anywhere else.
+  - One exception: `tests/chat-helpers.ts` may query `chat_messages` directly, only to delete the test user's own test conversations and confirm they are gone. It signs in as the E2E test user, so RLS still applies. No other file gets this exception.
 
 ## Pages
 - Public: login/sign-up.

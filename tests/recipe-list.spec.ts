@@ -22,4 +22,9 @@ test('recipe list: test user sees the heading and the empty state', async ({ pag
   await expect(page.getByText('No recipes yet')).toBeVisible();
   await expect(page.getByRole('list', { name: 'Recipes' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Logout' })).toBeVisible();
+
+  // The shared top bar links to the chat page.
+  await page.getByRole('link', { name: 'Chat' }).click();
+  await expect(page).toHaveURL(/\/chat$/);
+  await expect(page.getByRole('heading', { name: 'Chat', level: 1 })).toBeVisible();
 });
