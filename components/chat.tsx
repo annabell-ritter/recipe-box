@@ -3,9 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { sendChatMessage } from "@/app/chat/actions";
-
-// Mirrors the server-side limit in app/chat/actions.ts (convenience only).
-const MESSAGE_MAX_LENGTH = 4_000;
+import { HISTORY_LIMIT, MESSAGE_MAX_LENGTH } from "@/lib/chat-limits";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -45,7 +43,9 @@ export function Chat({ initialConversationId, initialMessages }: ChatProps) {
       if (result.ok) {
         setMessages([...conversation, { role: "assistant", content: result.reply }]);
         if (!result.saved) {
-          setNotice("This reply could not be saved, so it may be missing after a reload.");
+          setNotice(
+            "This reply could not be saved. The AI will not remember it in this conversation, and it will be missing after a reload.",
+          );
         }
       } else {
         // Undo the unanswered message and give the text back for a retry.
@@ -125,6 +125,12 @@ export function Chat({ initialConversationId, initialMessages }: ChatProps) {
       {notice && (
         <p role="status" className="text-sm text-muted-foreground">
           {notice}
+        </p>
+      )}
+      {messages.length > HISTORY_LIMIT && (
+        <p className="text-sm text-muted-foreground">
+          The AI only remembers the last {HISTORY_LIMIT} messages of a conversation. Start a new
+          conversation for a new topic.
         </p>
       )}
 

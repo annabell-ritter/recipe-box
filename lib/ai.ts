@@ -50,8 +50,9 @@ export async function generateText(
 }
 
 /**
- * Send a whole conversation to the configured model and return its next
- * reply. Passing the earlier messages is what lets the model understand
+ * Send the given messages (recent history plus the new question) to the
+ * configured model and return its next reply. Passing the earlier messages
+ * is what lets the model understand
  * follow-ups like "tell me more about that".
  */
 export async function generateChatReply(

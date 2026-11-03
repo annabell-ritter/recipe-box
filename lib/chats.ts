@@ -118,7 +118,7 @@ export async function getConversation(conversationId?: string): Promise<Conversa
 
 /**
  * The newest `limit` saved messages of a conversation, oldest first. This is
- * the history the AI sees, so it comes from the database, never the browser.
+ * the history the AI sees, so it comes from the saved history, not the request.
  */
 export async function getRecentMessages(
   conversationId: string,

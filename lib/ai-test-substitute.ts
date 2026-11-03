@@ -24,8 +24,9 @@ export async function isTestSubstituteOn(): Promise<boolean> {
 }
 
 /**
- * A fixed, predictable reply. It says how many messages arrived, so a test
- * can confirm the whole conversation (the AI's memory) reached the server.
+ * A fixed, predictable reply. It says how many messages the model would have
+ * received, so a test can confirm the saved history (the AI's memory) was
+ * loaded and passed along with the new question.
  */
 export function testSubstituteReply(messages: ChatMessage[]): string {
   const questionNumber = messages.filter((m) => m.role === "user").length;

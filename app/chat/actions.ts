@@ -2,31 +2,29 @@
 
 import { getOptionalUser } from "@/lib/auth";
 import { generateChatReply, type ChatMessage } from "@/lib/ai";
+import { HISTORY_LIMIT, MESSAGE_MAX_LENGTH } from "@/lib/chat-limits";
 import {
   getQuestionTimesSince,
   getRecentMessages,
   isConversationId,
   saveExchange,
 } from "@/lib/chats";
+import { NotSignedInError } from "@/lib/recipes";
 
 /**
  * Server action behind the chat page. It is a public endpoint, so it never
  * trusts the browser: it re-checks the signed-in user and accepts only the
- * new question. The earlier messages the AI sees are loaded from the
- * database, so the browser cannot invent "assistant" turns. The API key stays
- * on the server; the browser only ever receives the reply text.
+ * new question. The earlier messages the AI sees come from the user's saved
+ * history in the database, not from the request. The API key stays on the
+ * server; the browser only ever receives the reply text.
  */
 
-// Limits keep a single request (and its cost) small. The browser mirrors
-// MESSAGE_MAX_LENGTH for convenience, but these server checks are what count.
-const MESSAGE_MAX_LENGTH = 4_000;
+// Keeps the cost of a single request small.
 const MAX_OUTPUT_TOKENS = 2_000;
-// How many saved messages (questions and replies) the AI sees as history.
-const HISTORY_LIMIT = 20;
 
-// Per-user sending limits, counted from the user's saved questions. This
-// stops heavy use from one account; the OpenRouter spending limit on the API
-// key is the hard cap on cost.
+// Per-user sending limits, counted from the user's saved questions. They
+// slow down heavy use from one account but are not a hard cap; the OpenRouter
+// spending limit on the API key is the hard cap on cost.
 const SHORT_WINDOW_MS = 10 * 60 * 1000;
 const SHORT_WINDOW_LIMIT = 20;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -56,7 +54,7 @@ async function checkSendingLimit(): Promise<string | null> {
   const times = await getQuestionTimesSince(new Date(now - DAY_MS), DAILY_LIMIT);
 
   if (times.length >= DAILY_LIMIT) {
-    return "You have reached today's chat limit. Please try again tomorrow.";
+    return "You have reached the chat limit for the last 24 hours. Please try again later.";
   }
   const recent = times.filter((t) => t.getTime() > now - SHORT_WINDOW_MS).length;
   if (recent >= SHORT_WINDOW_LIMIT) {
@@ -66,9 +64,9 @@ async function checkSendingLimit(): Promise<string | null> {
 }
 
 /**
- * Sends the saved conversation plus the new question to the model (that is
- * what gives the AI its memory), then saves the question and the reply to the
- * conversation in Supabase through lib/chats.ts.
+ * Sends the last HISTORY_LIMIT saved messages plus the new question to the
+ * model (that is what gives the AI its memory), then saves the question and
+ * the reply to the conversation in Supabase through lib/chats.ts.
  */
 export async function sendChatMessage(
   conversationId: unknown,
@@ -99,8 +97,12 @@ export async function sendChatMessage(
     ]);
     if (limitMessage) return { ok: false, error: limitMessage };
     messages = [...history, { role: "user", content: text }];
-  } catch {
-    // lib/chats.ts has already logged the (safe) error details.
+  } catch (error) {
+    // The session can end between the check above and these calls.
+    if (error instanceof NotSignedInError) {
+      return { ok: false, error: "Your session has ended. Please log in again." };
+    }
+    // Database errors were already logged (safely) by lib/chats.ts.
     return { ok: false, error: "Your chat could not be loaded. Please try again." };
   }
 
