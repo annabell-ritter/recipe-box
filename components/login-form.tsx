@@ -51,7 +51,7 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="font-display text-2xl font-normal">Login</CardTitle>
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
@@ -80,16 +80,16 @@ export function LoginForm({
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Logging in..." : "Login"}
               </Button>
             </div>
-            <div className="mt-4 text-center text-sm">
+            <div className="mt-6 text-center text-sm text-muted-foreground">
               Don&apos;t have an account?{" "}
               <Link
                 href="/auth/sign-up"
-                className="underline underline-offset-4"
+                className="font-medium text-primary underline-offset-4 hover:underline"
               >
                 Sign up
               </Link>
