@@ -13,7 +13,7 @@ function SubmitButton({ title }: { title: string }) {
       variant="ghost"
       size="icon"
       disabled={pending}
-      aria-label={`Delete ${title}`}
+      aria-label={pending ? `Deleting ${title}` : `Delete ${title}`}
       className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
     >
       {pending ? (

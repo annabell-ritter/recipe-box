@@ -7,16 +7,14 @@ import { cn } from "@/lib/utils";
  * to its left, so a centered logo lines up with centered text below it.
  */
 export function Wordmark({
-  className,
   nameClassName,
   centerName = false,
 }: {
-  className?: string;
   nameClassName?: string;
   centerName?: boolean;
 }) {
   return (
-    <span className={cn("relative inline-flex items-center gap-2", className)}>
+    <span className="relative inline-flex items-center gap-2">
       <span
         className={cn(
           "flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary",

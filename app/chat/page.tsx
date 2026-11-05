@@ -41,7 +41,12 @@ export default function ChatPage(props: ChatPageProps) {
         <div className="flex flex-col gap-4">
           <div className="group flex items-center gap-3">
             <HeadingIcon variant="chat" />
-            <h1 className="text-2xl leading-tight sm:text-3xl">Chat</h1>
+            <div>
+              <h1 className="text-2xl leading-tight sm:text-3xl">Chat</h1>
+              <p className="mt-1 hidden text-sm text-muted-foreground sm:block">
+                Your cooking assistant.
+              </p>
+            </div>
           </div>
           <p className="text-sm text-muted-foreground">Loading chat…</p>
         </div>
