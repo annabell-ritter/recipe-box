@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { LogoutButton } from "@/components/logout-button";
+import { NavLinks } from "@/components/nav-links";
+import { Wordmark } from "@/components/wordmark";
 
 /**
  * Page frame for every signed-in area (recipes, chat). It renders only after
@@ -8,30 +10,22 @@ import { LogoutButton } from "@/components/logout-button";
  * signed-out visitors, but this check does not rely on it.
  */
 export async function SignedInShell({ children }: { children: React.ReactNode }) {
-  const user = await requireUser();
+  await requireUser();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <nav className="w-full border-b border-b-foreground/10">
-        <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-5 text-sm">
-          <div className="flex items-center gap-4">
-            <span className="font-semibold">Recipe Box</span>
-            <Link href="/recipes" className="hover:underline">
-              Recipes
+    <div className="flex min-h-screen flex-col">
+      <header className="sticky top-0 z-10 w-full border-b bg-background/80 backdrop-blur">
+        <nav className="mx-auto flex h-16 max-w-3xl items-center justify-between gap-4 px-5">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Link href="/recipes" aria-label="Recipe Box home">
+              <Wordmark nameClassName="hidden sm:inline" />
             </Link>
-            <Link href="/chat" className="hover:underline">
-              Chat
-            </Link>
+            <NavLinks />
           </div>
-          <div className="flex items-center gap-4">
-            {user.email && (
-              <span className="hidden text-muted-foreground sm:inline">{user.email}</span>
-            )}
-            <LogoutButton />
-          </div>
-        </div>
-      </nav>
-      <main className="mx-auto w-full max-w-3xl flex-1 p-5">{children}</main>
+          <LogoutButton />
+        </nav>
+      </header>
+      <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8 sm:py-10">{children}</main>
     </div>
   );
 }
