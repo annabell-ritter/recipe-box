@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { Chat } from "@/components/chat";
+import { HeadingIcon } from "@/components/heading-icon";
 import { getConversation } from "@/lib/chats";
 import { NotSignedInError } from "@/lib/recipes";
 
@@ -33,11 +34,20 @@ async function SavedChat({ searchParams }: ChatPageProps) {
 
 export default function ChatPage(props: ChatPageProps) {
   return (
-    <div className="flex flex-col gap-3">
-      <h1 className="text-2xl font-bold">Chat</h1>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">Loading chat…</p>}>
-        <SavedChat {...props} />
-      </Suspense>
-    </div>
+    // The heading lives inside <Chat> (next to "New conversation"), so the
+    // loading state shows the same heading while the conversation loads.
+    <Suspense
+      fallback={
+        <div className="flex flex-col gap-4">
+          <div className="group flex items-center gap-3">
+            <HeadingIcon variant="chat" />
+            <h1 className="text-2xl leading-tight sm:text-3xl">Chat</h1>
+          </div>
+          <p className="text-sm text-muted-foreground">Loading chat…</p>
+        </div>
+      }
+    >
+      <SavedChat {...props} />
+    </Suspense>
   );
 }

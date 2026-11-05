@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
+import { MessageCircle, Plus, SendHorizontal } from "lucide-react";
+import { HeadingIcon } from "@/components/heading-icon";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { sendChatMessage } from "@/app/chat/actions";
 import { HISTORY_LIMIT, MESSAGE_MAX_LENGTH } from "@/lib/chat-limits";
 
@@ -70,15 +73,24 @@ export function Chat({ initialConversationId, initialMessages }: ChatProps) {
   }
 
   return (
-    <div className="flex h-[calc(100dvh-11rem)] flex-col gap-3">
-      <div className="flex justify-end">
+    <div className="flex h-[calc(100dvh-8rem)] flex-col gap-4 sm:h-[calc(100dvh-9rem)]">
+      <div className="flex items-center justify-between gap-3 sm:gap-4">
+        <div className="group flex min-w-0 items-center gap-3">
+          <HeadingIcon variant="chat" />
+          <div>
+            <h1 className="text-2xl leading-tight sm:text-3xl">Chat</h1>
+            <p className="mt-1 hidden text-sm text-muted-foreground sm:block">
+              Your cooking assistant.
+            </p>
+          </div>
+        </div>
         <Button
           type="button"
-          variant="outline"
-          size="sm"
+          className="shrink-0 px-3 sm:px-4"
           onClick={startNewConversation}
           disabled={isPending || messages.length === 0}
         >
+          <Plus aria-hidden="true" />
           New conversation
         </Button>
       </div>
@@ -86,12 +98,17 @@ export function Chat({ initialConversationId, initialMessages }: ChatProps) {
         role="log"
         aria-label="Conversation"
         aria-live="polite"
-        className="flex-1 overflow-y-auto rounded-md border p-4"
+        className="flex-1 overflow-y-auto rounded-xl border bg-card p-4 shadow-sm sm:p-6"
       >
         {messages.length === 0 && !isPending && (
-          <p className="text-center text-sm text-muted-foreground">
-            Ask anything about cooking, recipes or ingredients.
-          </p>
+          <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+            <span className="flex size-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+              <MessageCircle className="size-6" aria-hidden="true" />
+            </span>
+            <p className="text-sm text-muted-foreground">
+              Ask anything about cooking, recipes or ingredients.
+            </p>
+          </div>
         )}
         <ul className="flex flex-col gap-3">
           {messages.map((message, index) => (
@@ -100,8 +117,8 @@ export function Chat({ initialConversationId, initialMessages }: ChatProps) {
               data-role={message.role}
               className={
                 message.role === "user"
-                  ? "ml-auto max-w-[80%] whitespace-pre-wrap rounded-2xl rounded-br-sm bg-primary px-4 py-2 text-sm text-primary-foreground"
-                  : "mr-auto max-w-[80%] whitespace-pre-wrap rounded-2xl rounded-bl-sm bg-muted px-4 py-2 text-sm"
+                  ? "ml-auto max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-sm leading-relaxed text-primary-foreground"
+                  : "mr-auto max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-bl-md bg-secondary px-4 py-2.5 text-sm leading-relaxed text-secondary-foreground"
               }
             >
               <span className="sr-only">{message.role === "user" ? "You: " : "AI: "}</span>
@@ -109,8 +126,16 @@ export function Chat({ initialConversationId, initialMessages }: ChatProps) {
             </li>
           ))}
           {isPending && (
-            <li className="mr-auto rounded-2xl rounded-bl-sm bg-muted px-4 py-2 text-sm text-muted-foreground">
-              Thinking…
+            <li className="mr-auto flex items-center gap-1 rounded-2xl rounded-bl-md bg-secondary px-4 py-3.5">
+              <span className="sr-only">Thinking…</span>
+              {[0, 150, 300].map((delay) => (
+                <span
+                  key={delay}
+                  aria-hidden="true"
+                  className="size-1.5 animate-bounce rounded-full bg-secondary-foreground/60"
+                  style={{ animationDelay: `${delay}ms` }}
+                />
+              ))}
             </li>
           )}
         </ul>
@@ -118,7 +143,7 @@ export function Chat({ initialConversationId, initialMessages }: ChatProps) {
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-red-500">
+        <p role="alert" className="text-sm text-destructive">
           {error}
         </p>
       )}
@@ -135,7 +160,7 @@ export function Chat({ initialConversationId, initialMessages }: ChatProps) {
       )}
 
       <form
-        className="flex items-end gap-2"
+        className="flex items-end gap-2 rounded-2xl border bg-card p-2 shadow-sm transition-colors focus-within:border-ring"
         onSubmit={(e) => {
           e.preventDefault();
           send();
@@ -144,7 +169,7 @@ export function Chat({ initialConversationId, initialMessages }: ChatProps) {
         <label htmlFor="chat-message" className="sr-only">
           Message
         </label>
-        <textarea
+        <Textarea
           id="chat-message"
           rows={2}
           value={draft}
@@ -158,10 +183,16 @@ export function Chat({ initialConversationId, initialMessages }: ChatProps) {
           }}
           maxLength={MESSAGE_MAX_LENGTH}
           placeholder="Type a message…"
-          className="flex min-h-10 w-full flex-1 resize-none rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
+          className="min-h-10 flex-1 resize-none border-0 bg-transparent shadow-none focus-visible:border-0 focus-visible:ring-0"
         />
-        <Button type="submit" disabled={isPending || draft.trim().length === 0}>
-          Send
+        <Button
+          type="submit"
+          size="icon"
+          aria-label="Send"
+          className="shrink-0 rounded-full"
+          disabled={isPending || draft.trim().length === 0}
+        >
+          <SendHorizontal aria-hidden="true" />
         </Button>
       </form>
     </div>
