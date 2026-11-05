@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Cal_Sans, Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
@@ -19,6 +19,18 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+// Display font for the large page titles and the wordmark; everything else is Geist.
+const calSans = Cal_Sans({
+  variable: "--font-display",
+  weight: "400",
+  display: "swap",
+  subsets: ["latin"],
+  // Next.js has no size metrics for Cal Sans, so it cannot build a matched
+  // fallback font and would warn on every compile. Use a plain fallback instead.
+  adjustFontFallback: false,
+  fallback: ["system-ui", "sans-serif"],
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,7 +38,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${calSans.variable} font-sans antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

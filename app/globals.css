@@ -2,60 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * "Soft sage" theme: near-white background, white cards, deep green-grey
+ * text, one muted sage accent and a pale sage tint for secondary surfaces.
+ * Values are HSL channels so Tailwind can add opacity (bg-primary/10).
+ */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --background: 80 18% 97%; /* #F7F8F5 */
+    --foreground: 144 7% 13%; /* #1F2421 */
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 144 7% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    --popover-foreground: 144 7% 13%;
+    --primary: 132 18% 38%; /* sage, slightly darker than #5B7F62 for text contrast */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 105 21% 93%; /* #EAF0E8 pale sage tint */
+    --secondary-foreground: 132 18% 28%;
+    --muted: 90 12% 94%;
+    --muted-foreground: 140 5% 40%;
+    --accent: 105 21% 93%;
+    --accent-foreground: 144 7% 13%;
+    --destructive: 0 65% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 90 11% 89%; /* #E3E6E0 */
+    --input: 90 10% 85%;
+    --ring: 132 18% 38%;
+    --radius: 0.75rem;
   }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
+}
+
+/*
+ * Kept outside @layer on purpose: Tailwind drops layered rules whose class
+ * never appears in the source, and "dark" is only added at runtime by
+ * next-themes, so inside @layer the dark theme would silently disappear.
+ */
+.dark {
+  --background: 140 8% 8%; /* #121513 */
+  --foreground: 100 10% 92%;
+  --card: 140 7% 11%;
+  --card-foreground: 100 10% 92%;
+  --popover: 140 7% 11%;
+  --popover-foreground: 100 10% 92%;
+  --primary: 129 23% 68%; /* #9BC1A1 light sage */
+  --primary-foreground: 140 8% 8%;
+  --secondary: 130 10% 18%;
+  --secondary-foreground: 120 15% 85%;
+  --muted: 140 6% 15%;
+  --muted-foreground: 120 5% 62%;
+  --accent: 130 10% 18%;
+  --accent-foreground: 100 10% 92%;
+  --destructive: 0 70% 60%;
+  --destructive-foreground: 140 8% 8%;
+  --border: 140 6% 20%;
+  --input: 140 6% 24%;
+  --ring: 129 23% 68%;
 }
 
 @layer base {
@@ -64,5 +65,13 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  /* Large titles use the display font; smaller headings stay in Geist. */
+  h1 {
+    @apply font-display font-normal;
+  }
+  h2,
+  h3 {
+    @apply tracking-tight;
   }
 }
