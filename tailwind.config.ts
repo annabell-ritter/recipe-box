@@ -11,6 +11,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-geist-sans)", "sans-serif"],
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -45,13 +49,37 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
+      },
+      // Page heading icons (components/heading-icon.tsx): the "-once"
+      // animations play when the page loads (also on touch screens, which have
+      // no hover); the looping ones play while the heading row is hovered.
+      keyframes: {
+        "steam-in": {
+          "0%": { transform: "translateY(3px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
         },
+        steam: {
+          "0%": { transform: "translateY(2px)", opacity: "0" },
+          "40%": { opacity: "1" },
+          "100%": { transform: "translateY(-4px)", opacity: "0" },
+        },
+        twinkle: {
+          "0%, 100%": { transform: "scale(1) rotate(0deg)" },
+          "50%": { transform: "scale(1.15) rotate(12deg)" },
+        },
+        wiggle: {
+          "0%, 100%": { transform: "rotate(0deg)" },
+          "25%": { transform: "rotate(-10deg)" },
+          "75%": { transform: "rotate(10deg)" },
+        },
+      },
+      animation: {
+        steam: "steam 1.6s ease-out infinite",
+        twinkle: "twinkle 1.2s ease-in-out infinite",
+        wiggle: "wiggle 0.6s ease-in-out infinite",
+        "steam-once": "steam-in 1s ease-out 200ms both",
+        "twinkle-once": "twinkle 1.2s ease-in-out 200ms",
+        "wiggle-once": "wiggle 0.6s ease-in-out 200ms",
       },
       borderRadius: {
         lg: "var(--radius)",
