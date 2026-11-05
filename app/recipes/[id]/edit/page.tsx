@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
+import { BackLink } from "@/components/back-link";
+import { HeadingIcon } from "@/components/heading-icon";
 import { RecipeForm } from "@/components/recipe-form";
 import { updateRecipeAction } from "@/app/recipes/actions";
 import { getRecipe, NotSignedInError } from "@/lib/recipes";
@@ -39,8 +41,20 @@ export default function EditRecipePage({
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">Edit recipe</h1>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">Loading recipe…</p>}>
+      <div className="flex flex-col gap-3">
+        <BackLink href="/recipes">Back to recipes</BackLink>
+        <div className="group flex items-center gap-3">
+          <HeadingIcon variant="edit" />
+          <h1 className="text-2xl leading-tight sm:text-3xl">Edit recipe</h1>
+        </div>
+      </div>
+      <Suspense
+        fallback={
+          <div className="h-96 animate-pulse rounded-xl border bg-card shadow-sm" aria-busy="true">
+            <span className="sr-only">Loading recipe…</span>
+          </div>
+        }
+      >
         <EditRecipe params={params} />
       </Suspense>
     </div>

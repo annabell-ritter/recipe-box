@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
+import { Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { deleteRecipeAction } from "@/app/recipes/actions";
 
@@ -9,12 +10,17 @@ function SubmitButton({ title }: { title: string }) {
   return (
     <Button
       type="submit"
-      variant="outline"
-      size="sm"
+      variant="ghost"
+      size="icon"
       disabled={pending}
       aria-label={`Delete ${title}`}
+      className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
     >
-      {pending ? "Deleting..." : "Delete"}
+      {pending ? (
+        <Loader2 className="animate-spin" aria-hidden="true" />
+      ) : (
+        <Trash2 aria-hidden="true" />
+      )}
     </Button>
   );
 }
