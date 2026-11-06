@@ -96,3 +96,27 @@ what was changed for each.
 ### "Try again tomorrow" was inaccurate
 - **Finding:** the daily limit is a rolling 24 hours, not a calendar day.
 - **Fix:** the message now says "the chat limit for the last 24 hours".
+
+---
+
+# Reflection: code review of the redesign
+
+Branch `design` (PR #7), reviewed on 2026-11-05 by the `ai-code-reviewer`
+agent. This section lists the findings that were fixed and what was changed
+for each.
+
+### The delete button no longer said when it was busy
+- **Finding:** "Delete" / "Deleting..." became an icon with a spinner, but
+  the screen-reader label stayed "Delete <title>" during a delete.
+- **Fix:** the label now changes to "Deleting <title>" while the delete runs
+  (`components/delete-recipe-button.tsx`).
+
+### The chat heading jumped while loading
+- **Finding:** the chat's loading placeholder repeated the heading but left
+  out the "Your cooking assistant." subtitle, so the title row shifted when
+  the chat appeared on tablet and desktop.
+- **Fix:** the placeholder now includes the subtitle (`app/chat/page.tsx`).
+
+### Unused option on the logo component
+- **Finding:** `Wordmark` accepted a `className` option that nothing used.
+- **Fix:** removed (`components/wordmark.tsx`).
